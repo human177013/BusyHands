@@ -26,10 +26,10 @@ async function start() {
 
         if (docState !== 'complete') {
             throw new Error("Load Timeout: Page did noy load in a timely manner.")
-        } else {
-            console.log('BusyHands Started');
         }
         
+        console.log('BusyHands Started');
+
     } catch (error) {
         console.log('BusyHands failed');
         console.error(error);

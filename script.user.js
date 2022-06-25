@@ -16,12 +16,10 @@ const URL = "https://human177013.github.io/BusyHands/busyhands.js";
 const FETCH_MAX_ATTEMPT = 3;
 
 
-
-
 (function() {
     try {
         let fetchAttempt = 0
-        
+
         fetch(URL).then((response) => {
             response.text().then((script) => {
                 window.eval(script);
@@ -39,4 +37,4 @@ const FETCH_MAX_ATTEMPT = 3;
         console.log('BusyHands failed to load!');
         console.error(error);
     }
-})()
+})();
