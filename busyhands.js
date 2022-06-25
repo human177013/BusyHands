@@ -7,16 +7,12 @@ function waitPageLoad() {
     return new Promise(resolve => {
         setTimeout((_document) => {
             // console.log("Checking document.readyState")
-            if (_document.readyState !== 'complete' && !((Date.now() - startTime) > LOAD_TIMEOUT)) {
+            var readyState = _document.readyState
+            if (readyState === 'loading' && !((Date.now() - startTime) > LOAD_TIMEOUT)) {
                 console.log('Document not ready');
-                _document.addEventListener("DOMContentLoaded", function () {
-                    console.log('Document ready -- in event');
-                    resolve(_document.readyState);
-                });
-            } else {
-                console.log('Document ready');
-                resolve(_document.readyState);
-            }
+                readyState = waitPageLoad()
+            } 
+            resolve(readyState);
         }, LOAD_INIT_WAIT, document);
     });
 }
@@ -27,7 +23,7 @@ async function start() {
         startTime = Date.now();
         let docState = await waitPageLoad()
 
-        if (docState !== 'complete') {
+        if (docState === 'loading') {
             throw new Error("Load Timeout: Page did noy load in a timely manner.")
         }
         
