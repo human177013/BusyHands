@@ -52,9 +52,6 @@ function handleKeyEvent(event) {
     var key = event.key;
     var keySequence = [];
 
-    if (key === 'Control' || key === 'Shift' || key === 'Alt')
-        return; // Do nothing.
-
     if (event.ctrlKey)
         keySequence.push(Keys.Control);
     if (event.shiftKey)
