@@ -8,8 +8,11 @@ function waitPageLoad() {
         setTimeout((_document) => {
             // console.log("Checking document.readyState")
             if (_document.readyState !== 'complete' && !((Date.now() - startTime) > LOAD_TIMEOUT)) {
-                // console.log('Document not ready');
-                resolve(waitPageLoad());
+                console.log('Document not ready');
+                _document.addEventListener("DOMContentLoaded", function () {
+                    console.log('Document ready -- in event');
+                    resolve(_document.readyState);
+                });
             } else {
                 console.log('Document ready');
                 resolve(_document.readyState);
