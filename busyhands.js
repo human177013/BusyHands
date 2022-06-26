@@ -199,47 +199,46 @@ function getCollumCount() {
 function changeSelection(distance) {
     let current = document.querySelector(CURRENT_SELECTION_QUERY);
     if (!current) {
-        document.querySelector(GALLERY_QUERY).classList.add(SELECTION_CLASS); //select first if none selected
+        selectGallery(document.querySelector(GALLERY_QUERY)); //select first if none selected
     } else {
-        let popularGalleries = [];
-        let mainGalleries = [];
+        let popularGalleries = new NodeList();
+        let mainGalleries = new NodeList();
         let currentindex = -1;
 
         if (document.URL.match(HOME_URL_PATTERN)) {
             popularGalleries = document.querySelectorAll(POPULAR_CONTAINER_QUERY + " " + GALLERY_QUERY);
-            currentindex = popularGalleries.indexOf(current);
-
+            currentindex = Array.prototype.indexOf.call(popularGalleries, current);
             if (currentindex >= 0) {
                 let newGalleryindex = currentindex + distance;
                 if (newGalleryindex < 0 ) {
-                    return selectGallery(popularGalleries[0]);
+                    return selectGallery(popularGalleries.item(0));
                 } else if (newGalleryindex > popularGalleries.length && currentindex === popularGalleries.length - 1 ) {
                     return selectGallery(document.querySelector(MAIN_CONTAINER_QUERY + " " + GALLERY_QUERY))
                 } else if (newGalleryindex > popularGalleries.length) {
-                    return selectGallery(popularGalleries[popularGalleries.length - 1])
+                    return selectGallery(popularGalleries.item(popularGalleries.length - 1))
                 } else {
-                    return selectGallery(popularGalleries[newGalleryindex]);
+                    return selectGallery(popularGalleries.item(newGalleryindex));
                 }
             }
         }
 
         mainGalleries = document.querySelectorAll(MAIN_CONTAINER_QUERY + " " + GALLERY_QUERY);
-        currentindex = mainGalleries.indexOf(current);
+        currentindex = Array.prototype.indexOf.call(mainGalleries, current);
 
         if (currentindex >= 0) {
             let newGalleryindex = currentindex + distance;
             if (newGalleryindex < 0 ) {
                 if (document.URL.match(HOME_URL_PATTERN)) {
-                    return selectGallery(popularGalleries[popularGalleries.length - 1]);
+                    return selectGallery(popularGalleries.item(popularGalleries.length - 1));
                 } else {
-                    return selectGallery(mainGalleries[0]);
+                    return selectGallery(mainGalleries.item(0));
                 }
             } else if (newGalleryindex > mainGalleries.length && currentindex === mainGalleries.length - 1) {
                 return current
             } else if (newGalleryindex > mainGalleries.length && currentindex === mainGalleries.length - 1) {
-                return selectGallery(mainGalleries[mainGalleries.length - 1]);
+                return selectGallery(mainGalleries.item(mainGalleries.length - 1));
             }else {
-                return selectGallery(mainGalleries[newGalleryindex]);
+                return selectGallery(mainGalleries.item(newGalleryindex));
             }
         }
     }
