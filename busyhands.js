@@ -9,11 +9,29 @@ const LOAD_TIMEOUT = 5000;
 
 const RANDOM_HREF = "/random/";
 
+const SELECTION_CLASS = "busyhands_seleted"
+
+const HOME_URL_PATTERN = /^https?:\/\/nhentai\.net\/?$/g
+const HOME_PAGES_URL_PATTERN = /^https?:\/\/nhentai\.net\/\?page=\d+$/g
+const SEARCH_URL_PATTERN = /^https?:\/\/nhentai\.net\/search\/\?q=.+$/g
+const POPULAR_CONTAINER_QUERY = "dev.container.index-container.index-popular";
+const MAIN_CONTAINER_QUERY = "dev.container.index-container:not(.index-popular)";
+const GALLERY_QUERY = "dev.gallery";
+const PREVIOUS_PAGE_QUERY = "a.previous";
+const NEXT_PAGE_QUERY = "a.next"
+const CURRENT_SELECTION_QUERY = "dev.gallery."+SELECTION_CLASS
+
 const GALLERY_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/?$/g
 const COVER_QUERY = "div#cover a";
 
 const GALLERY_IMAGE_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/\d+\/$/g
 const GO_BACK_QUERY = "a.go-back";
+
+const SELECTION_STYLE = document.createElement('style').innerHTML = `
+      ${CURRENT_SELECTION_QUERY} {
+        outline: #ed2553 solid 4px;
+      }
+    `;
 
 let startTime = undefined;
 
@@ -41,6 +59,8 @@ async function start() {
         }
 
         console.log('BusyHands Started');
+
+        ocument.head.appendChild(style);
 
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Control' || event.key === 'Shift' || event.key === 'Alt')
@@ -70,12 +90,59 @@ function handleKeyEvent(event) {
     var keySequenceStr = keySequence.join("+");
     console.log(keySequenceStr);
 
-    if (document.URL.match(GALLERY_URL_PATTERN)) {
+    if (document.URL.match(HOME_URL_PATTERN) || document.URL.match(HOME_PAGES_URL_PATTERN) || document.URL.match(SEARCH_URL_PATTERN)) {
+        handleKeyEventSelection(event, keySequenceStr)
+    } else if (document.URL.match(GALLERY_URL_PATTERN)) {
         handleKeyEventGallery(event, keySequenceStr)
     } else if (document.URL.match(GALLERY_IMAGE_URL_PATTERN)) {
-        handleKeyEventGalleryImage(event, keySequenceStr)
+        handleKeyEventGalleryImage(event, keySequenceStr)  
     } else {
         handleKeyEventGlobal(event, keySequenceStr)
+    }
+}
+
+function handleKeyEventSelection(event, keySequenceStr) {    
+    switch (keySequenceStr) {
+        case 'W':
+        case 'ArrowUp':
+            event.preventDefault();
+            changeSelection(-getCollumCount())
+            break;
+        case 'A':
+        case 'ArrowLeft':
+            event.preventDefault();
+            changeSelection(-1)
+            break;
+        case 'S':
+        case 'ArrowDown':
+            event.preventDefault();
+            changeSelection(getCollumCount())
+            break;
+        case 'D':
+        case 'ArrowRight':
+            event.preventDefault();
+            changeSelection(1)
+            break;
+        case 'F':
+        case 'Enter':
+            event.preventDefault();
+            let current = document.querySelector(CURRENT_SELECTION_QUERY);
+            if (current) {
+                current.querySelector(COVER_QUERY).click()
+            }
+            break;
+        case 'Q':
+        case 'PageUp':
+            event.preventDefault();
+            document.querySelector(PREVIOUS_PAGE_QUERY).click();
+            break;
+        case 'E':
+        case 'PageDown':
+            event.preventDefault();
+            document.querySelector(NEXT_PAGE_QUERY).click();
+            break;
+        default:
+            handleKeyEventGlobal(event, keySequenceStr);
     }
 }
 
@@ -112,6 +179,72 @@ function handleKeyEventGlobal(event, keySequenceStr) {
         default:
             return;
     }
+}
+
+function getCollumCount() {
+    let containerWidth = document.querySelector(MAIN_CONTAINER_QUERY).offsetWidth
+    let galleryWidth = document.querySelector(GALLERY_QUERY).offsetWidth
+    let marginWidth = document.querySelector(GALLERY_QUERY).offsetLeft * 2
+    return Math.floor((containerWidth - marginWidth) / galleryWidth)
+}
+
+function changeSelection(distance) {
+    let current = document.querySelector(CURRENT_SELECTION_QUERY);
+    if (!current) {
+        document.querySelector(GALLERY_QUERY).classList.add(SELECTION_CLASS); //select first if none selected
+    } else {
+        let popularGalleries = [];
+        let mainGalleries = [];
+        let currentindex = -1;
+
+        if (document.URL.match(HOME_URL_PATTERN)) {
+            popularGalleries = document.querySelectorAll(POPULAR_CONTAINER_QUERY + " " + GALLERY_QUERY);
+            currentindex = popularGalleries.indexOf(current);
+
+            if (currentindex >= 0) {
+                let newGalleryindex = currentindex + distance;
+                if (newGalleryindex < 0 ) {
+                    return selectGallery(popularGalleries[0]);
+                } else if (newGalleryindex > popularGalleries) {
+                    return selectGallery(document.querySelector(MAIN_CONTAINER_QUERY + " " + GALLERY_QUERY))
+                } else {
+                    return selectGallery(popularGalleries[newGalleryindex]);
+                }
+            }
+        }
+
+        mainGalleries = document.querySelectorAll(MAIN_CONTAINER_QUERY + " " + GALLERY_QUERY);
+        currentindex = mainGalleries.indexOf(current);
+
+        if (currentindex >= 0) {
+            let newGalleryindex = currentindex + distance;
+            if (newGalleryindex < 0 ) {
+                if (document.URL.match(HOME_URL_PATTERN)) {
+                    return selectGallery(popularGalleries[popularGalleries.length - 1]);
+                } else {
+                    return selectGallery(mainGalleries[0]);
+                }
+            } else if (newGalleryindex > mainGalleries) {
+                return current
+            }else {
+                return selectGallery(mainGalleries[newGalleryindex]);
+            }
+        }
+    }
+}
+
+function selectGallery(galleryElement) {
+    let current = document.querySelectorAll(CURRENT_SELECTION_QUERY);
+
+    if (current) {
+        current.forEach(element => {
+            element.classList.remove(SELECTION_CLASS);
+        });
+    }
+
+    galleryElement.classList.add(SELECTION_CLASS);
+
+    return current[current.length - 1];
 }
 
 start()
