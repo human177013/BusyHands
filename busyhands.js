@@ -136,12 +136,16 @@ function handleKeyEventSelection(event, keySequenceStr) {
         case 'Q':
         case 'PageUp':
             event.preventDefault();
-            document.querySelector(PREVIOUS_PAGE_QUERY).click();
+            let previous = document.querySelector(PREVIOUS_PAGE_QUERY);
+            if (previous)
+                previous.click();
             break;
         case 'E':
         case 'PageDown':
             event.preventDefault();
-            document.querySelector(NEXT_PAGE_QUERY).click();
+            let next = document.querySelector(NEXT_PAGE_QUERY);
+            if (next)
+                next.click();
             break;
         default:
             handleKeyEventGlobal(event, keySequenceStr);

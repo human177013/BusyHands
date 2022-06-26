@@ -21,9 +21,9 @@ Delete plug-in or delete script from Tampermonkey/Greasemonkey plug-in.
 | A or 🡆 (ArrowLeft) | Moves seletor to the previous item |
 | S or 🡆 (ArrowDown) | Moves seletor down one row |
 | D or 🡆 (ArrowRight) | Moves seletor to the next item |
-| F or Enter | Opens first page/image of gallery |
-| Q or PageUp | Opens first page/image of gallery |
-| E or PageDown | Opens first page/image of gallery |
+| F or Enter | Opens current selected item |
+| Q or PageUp | Navagates to the previous page |
+| E or PageDown | Navagates to the next vious page |
 
 ### Gallery Keys
 | Key | Function |
