@@ -17,9 +17,10 @@ const SEARCH_URL_PATTERN = /^https?:\/\/nhentai\.net\/search\/\?q=.+$/g
 const POPULAR_CONTAINER_QUERY = "div.container.index-container.index-popular";
 const MAIN_CONTAINER_QUERY = "div.container.index-container:not(.index-popular)";
 const GALLERY_QUERY = "div.gallery";
+const GALLERY_LINK_QUERY = 'a.cover';
 const PREVIOUS_PAGE_QUERY = "a.previous";
 const NEXT_PAGE_QUERY = "a.next"
-const CURRENT_SELECTION_QUERY = "div.gallery."+SELECTION_CLASS
+const CURRENT_SELECTION_QUERY = "div.gallery." + SELECTION_CLASS
 
 const GALLERY_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/?$/g
 const COVER_QUERY = "div#cover a";
@@ -97,13 +98,13 @@ function handleKeyEvent(event) {
     } else if (document.URL.match(GALLERY_URL_PATTERN)) {
         handleKeyEventGallery(event, keySequenceStr)
     } else if (document.URL.match(GALLERY_IMAGE_URL_PATTERN)) {
-        handleKeyEventGalleryImage(event, keySequenceStr)  
+        handleKeyEventGalleryImage(event, keySequenceStr)
     } else {
         handleKeyEventGlobal(event, keySequenceStr)
     }
 }
 
-function handleKeyEventSelection(event, keySequenceStr) {    
+function handleKeyEventSelection(event, keySequenceStr) {
     switch (keySequenceStr) {
         case 'W':
         case 'ArrowUp':
@@ -130,7 +131,7 @@ function handleKeyEventSelection(event, keySequenceStr) {
             event.preventDefault();
             let current = document.querySelector(CURRENT_SELECTION_QUERY);
             if (current) {
-                let a = current.querySelector(COVER_QUERY);
+                let a = current.querySelector(GALLERY_LINK_QUERY);
                 a.setAttribute("target", "_blank");
                 a.click();
             }
@@ -182,7 +183,7 @@ function handleKeyEventGlobal(event, keySequenceStr) {
     switch (keySequenceStr) {
         case 'R':
             event.preventDefault();
-            window.location.href = RANDOM_HREF;
+            window.open(RANDOM_HREF, "_blank");
             break;
         default:
             return;
@@ -205,42 +206,56 @@ function changeSelection(distance) {
         let mainGalleries = undefined;
         let currentindex = -1;
 
+        currentindex = Array.prototype.indexOf.call(popularGalleries, current);
+        if (currentindex > -1) {
+            changeSelectionPopular(distance, current, currentindex)
+        } else {
+            currentindex = Array.prototype.indexOf.call(mainGalleries, current);
+            changeSelectionMain(distance, current, currentindex)
+        }       
+    }
+}
+
+function changeSelectionPopular(distance, current, currentindex) {
+    let popularGalleries = document.querySelectorAll(POPULAR_CONTAINER_QUERY + " " + GALLERY_QUERY);
+
+    let isFromMain = (Array.prototype.indexOf.call(popularGalleries, current) === -1)
+
+    let newGalleryindex = currentindex + distance;
+    if (isFromMain) {
+        newGalleryindex = popularGalleries.length - ((popularGalleries.length % distance) - currentindex);
+        if (newGalleryindex > popularGalleries.length - 1)
+            newGalleryindex = popularGalleries.length - 1;
+        return selectGallery(popularGalleries.item(newGalleryindex));
+    } else if (newGalleryindex < 0) {
+        return current;
+    } else if (newGalleryindex > popularGalleries.length - 1) {
+        return changeSelectionMain(distance, current, currentindex);
+    } else {
+        return selectGallery(popularGalleries.item(newGalleryindex));
+    }
+}
+
+function changeSelectionMain(distance, current, currentindex) {
+    let mainGalleries = document.querySelectorAll(MAIN_CONTAINER_QUERY + " " + GALLERY_QUERY);
+
+    let isFromPopular = (Array.prototype.indexOf.call(mainGalleries, current) === -1)
+
+    let newGalleryindex = currentindex + distance;
+    if (isFromPopular) {
+        let width = getCollumCount();
+        newGalleryindex = width - (width - (currentindex % distance));
+        return selectGallery(popularGalleries.item(newGalleryindex));
+    } else if (isFromPopular < 0) {
         if (document.URL.match(HOME_URL_PATTERN)) {
-            popularGalleries = document.querySelectorAll(POPULAR_CONTAINER_QUERY + " " + GALLERY_QUERY);
-            currentindex = Array.prototype.indexOf.call(popularGalleries, current);
-            if (currentindex >= 0) {
-                let newGalleryindex = currentindex + distance;
-                if (newGalleryindex < 0 ) {
-                    return selectGallery(popularGalleries.item(0));
-                } else if (newGalleryindex > popularGalleries.length && currentindex === popularGalleries.length - 1 ) {
-                    return selectGallery(document.querySelector(MAIN_CONTAINER_QUERY + " " + GALLERY_QUERY))
-                } else if (newGalleryindex > popularGalleries.length) {
-                    return selectGallery(popularGalleries.item(popularGalleries.length - 1))
-                } else {
-                    return selectGallery(popularGalleries.item(newGalleryindex));
-                }
-            }
+            return changeSelectionPopular(distance, current, currentindex)
+        } else {
+            return selectGallery(mainGalleries.item(0));
         }
-
-        mainGalleries = document.querySelectorAll(MAIN_CONTAINER_QUERY + " " + GALLERY_QUERY);
-        currentindex = Array.prototype.indexOf.call(mainGalleries, current);
-
-        if (currentindex >= 0) {
-            let newGalleryindex = currentindex + distance;
-            if (newGalleryindex < 0 ) {
-                if (document.URL.match(HOME_URL_PATTERN)) {
-                    return selectGallery(popularGalleries.item(popularGalleries.length - 1));
-                } else {
-                    return selectGallery(mainGalleries.item(0));
-                }
-            } else if (newGalleryindex > mainGalleries.length && currentindex === mainGalleries.length - 1) {
-                return current
-            } else if (newGalleryindex > mainGalleries.length && currentindex === mainGalleries.length - 1) {
-                return selectGallery(mainGalleries.item(mainGalleries.length - 1));
-            }else {
-                return selectGallery(mainGalleries.item(newGalleryindex));
-            }
-        }
+    } else if (newGalleryindex >= mainGalleries.length) {
+        return current;
+    } else {
+        return selectGallery(mainGalleries.item(newGalleryindex));
     }
 }
 
