@@ -1,3 +1,16 @@
+// ==UserScript==
+// @name         BusyHands
+// @namespace    https://human177013.github.io
+// @version      0.0.1-dev
+// @icon         https://i.imgur.com/uLAimaY.png
+// @description  nhentai one-handed tool
+// @author       human177013
+// @match        https://nhentai.net/*
+// @downloadURL  https://raw.githubusercontent.com/human177013/BusyHands/develop/busyhands.js
+// @run-at       document-end
+// @grant        none
+// ==/UserScript==
+
 const Keys = Object.freeze({
     Ctrl: 'Ctrl',
     Shift: 'Shift',
