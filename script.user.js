@@ -5,7 +5,7 @@
 // @icon         https://i.imgur.com/uLAimaY.png
 // @description  nhentai one-handed tool
 // @author       human177013
-// @include      /^https?://nhentai\.net/g/\d+/?$/
+// @match        https://nhentai.net/*
 // @updateURL    https://human177013.github.io/BusyHands/script.meta.js
 // @downloadURL  https://human177013.github.io/BusyHands/script.user.js
 // @run-at       document-end

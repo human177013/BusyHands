@@ -6,7 +6,11 @@ const Keys = Object.freeze({
 
 const LOAD_INIT_WAIT = 0;
 const LOAD_TIMEOUT = 5000;
-const coverQuery = "div#cover a";
+
+const RANDOM_HREF = "/random/";
+
+const GALLERY_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/?$/g
+const COVER_QUERY = "div#cover a";
 
 let startTime = undefined;
 
@@ -16,7 +20,7 @@ function waitPageLoad() {
             // console.log("Checking document.readyState")
             var readyState = _document.readyState
             if (readyState === 'loading' && !((Date.now() - startTime) > LOAD_TIMEOUT)) {
-                console.log('Document not ready');
+                // console.log('Document not ready');
                 readyState = waitPageLoad()
             }
             resolve(readyState);
@@ -60,13 +64,33 @@ function handleKeyEvent(event) {
         keySequence.push(Keys.Alt);
     keySequence.push(key.charAt(0).toUpperCase()+key.substring(1));
 
-    console.log(keySequence.join("+"))
+    var keySequenceStr = keySequence.join("+");
+    console.log(keySequenceStr);
 
-    switch (keySequence.join("+")) {
+    if (document.URL.match(GALLERY_URL_PATTERN)){
+        handleKeyEventGallery(event, keySequenceStr)
+    } else {
+        handleKeyEventGlobal(event, keySequenceStr)
+    }
+}
+
+function handleKeyEventGallery(event, keySequenceStr) {
+    switch (keySequenceStr) {
         case 'D':
         case 'ArrowRight':
             event.preventDefault();
-            document.querySelector(coverQuery).click();
+            document.querySelector(COVER_QUERY).click();
+            break;
+        default:
+            handleKeyEventGlobal(event, keySequenceStr);
+    }
+}
+
+function handleKeyEventGlobal(event, keySequenceStr) {
+    switch (keySequenceStr) {
+        case 'R':
+            event.preventDefault();
+            window.location.href = RANDOM_HREF;
             break;
         default:
             return;
