@@ -19,7 +19,7 @@ const MAIN_CONTAINER_QUERY = "div.container.index-container:not(.index-popular)"
 const GALLERY_QUERY = "div.gallery";
 const PREVIOUS_PAGE_QUERY = "a.previous";
 const NEXT_PAGE_QUERY = "a.next"
-const CURRENT_SELECTION_QUERY = "ddivev.gallery."+SELECTION_CLASS
+const CURRENT_SELECTION_QUERY = "div.gallery."+SELECTION_CLASS
 
 const GALLERY_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/?$/g
 const COVER_QUERY = "div#cover a";
