@@ -9,12 +9,12 @@ NHentai one-handed tool
 Delete plug-in or delete script from Tampermonkey/Greasemonkey plug-in.
 
 # Keys
-## Global Keys
+### Global Keys
 | Key | Function |
 | ----------- | ----------- |
 | R | Loads random gallery |
 
-## Gallery Keys
+### Gallery Keys
 | Key | Function |
 | ----------- | ----------- |
 | D or 🡆 (ArrowRight) | Opens first page/image of gallery |
