@@ -18,3 +18,8 @@ Delete plug-in or delete script from Tampermonkey/Greasemonkey plug-in.
 | Key | Function |
 | ----------- | ----------- |
 | D or 🡆 (ArrowRight) | Opens first page/image of gallery |
+
+### Gallery Image Keys
+| Key | Function |
+| ----------- | ----------- |
+| G or Home | Returns to the gallery |

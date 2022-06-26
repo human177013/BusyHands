@@ -1,5 +1,5 @@
 const Keys = Object.freeze({
-    Control: 'Control',
+    Ctrl: 'Ctrl',
     Shift: 'Shift',
     Alt: 'Alt'
 });
@@ -11,6 +11,9 @@ const RANDOM_HREF = "/random/";
 
 const GALLERY_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/?$/g
 const COVER_QUERY = "div#cover a";
+
+const GALLERY_IMAGE_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/\n+\/$/g
+const GO_BACK_QUERY = "a.go-back";
 
 let startTime = undefined;
 
@@ -53,22 +56,24 @@ async function start() {
 }
 
 function handleKeyEvent(event) {
-    var key = event.key;
+    var code = event.code;
     var keySequence = [];
 
     if (event.ctrlKey)
-        keySequence.push(Keys.Control);
+        keySequence.push(Keys.Ctrl);
     if (event.shiftKey)
         keySequence.push(Keys.Shift);
     if (event.altKey)
         keySequence.push(Keys.Alt);
-    keySequence.push(key.charAt(0).toUpperCase()+key.substring(1));
+    keySequence.push(code.replace(/Digit|Key/i, ""));
 
     var keySequenceStr = keySequence.join("+");
     console.log(keySequenceStr);
 
     if (document.URL.match(GALLERY_URL_PATTERN)){
         handleKeyEventGallery(event, keySequenceStr)
+    if (document.URL.match(GALLERY_IMAGE_URL_PATTERN)){
+        handleKeyEventGalleryImage(event, keySequenceStr)
     } else {
         handleKeyEventGlobal(event, keySequenceStr)
     }
@@ -80,6 +85,18 @@ function handleKeyEventGallery(event, keySequenceStr) {
         case 'ArrowRight':
             event.preventDefault();
             document.querySelector(COVER_QUERY).click();
+            break;
+        default:
+            handleKeyEventGlobal(event, keySequenceStr);
+    }
+}
+
+function handleKeyEventGalleryImage(event, keySequenceStr) {
+    switch (keySequenceStr) {
+        case 'G':
+        case 'Home':
+            event.preventDefault();
+            document.querySelector(GO_BACK_QUERY).click();
             break;
         default:
             handleKeyEventGlobal(event, keySequenceStr);

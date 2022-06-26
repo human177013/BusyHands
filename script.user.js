@@ -12,34 +12,32 @@
 // @grant        none
 // ==/UserScript==
 
-const URL = "https://human177013.github.io/BusyHands/busyhands.js";
+const SCRIPT_URL = "https://human177013.github.io/BusyHands/busyhands.js";
 const FETCH_MAX_ATTEMPT = 3;
+const FETCH_RETRY_DELAY = 1000;
+
+function wait(delay) {
+    return new Promise((resolve) => setTimeout(resolve, delay));
+}
+
+function fetchRetry(url, delay, tries, fetchOptions = {}) {
+    return fetch(url, fetchOptions).catch((error) => {
+        triesLeft = tries - 1;
+        if (!triesLeft) {
+            throw err;
+        }
+        return wait(delay).then(() => fetchRetry(url, delay, triesLeft, fetchOptions));
+    });
+}
 
 
 (function () {
     try {
-        let fetchAttempt = 0;
-        let isLoaded = false;
-
-        while (!isLoaded && fetchAttempt < FETCH_MAX_ATTEMPT) {
-            fetch(URL).then((response) => {                
-                response.text().then((script) => {
-                    isLoaded = true;
-                    window.eval(script);
-                });
-            }).catch((error) => {
-                fetchAttempt++;
-                if (fetchAttempt > FETCH_MAX_ATTEMPT) {
-                    throw error;
-                } else {
-                    console.warn('BusyHands script failed to load. Trying again...');
-                }
+        fetchRetry(SCRIPT_URL, FETCH_RETRY_DELAY, FETCH_MAX_ATTEMPT).then((response) => {
+            response.text().then((script) => {
+                window.eval(script);
             });
-        }
-        
-        if (!isLoaded)
-            throw new Error('BusyHands script failed to load ' + fetchAttempt + ' times.')
-
+        });
     } catch (error) {
         console.log('BusyHands failed to load!');
         console.error(error);
