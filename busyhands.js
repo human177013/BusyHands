@@ -70,9 +70,9 @@ function handleKeyEvent(event) {
     var keySequenceStr = keySequence.join("+");
     console.log(keySequenceStr);
 
-    if (document.URL.match(GALLERY_URL_PATTERN)){
+    if (document.URL.match(GALLERY_URL_PATTERN)) {
         handleKeyEventGallery(event, keySequenceStr)
-    if (document.URL.match(GALLERY_IMAGE_URL_PATTERN)){
+    } else if (document.URL.match(GALLERY_IMAGE_URL_PATTERN)) {
         handleKeyEventGalleryImage(event, keySequenceStr)
     } else {
         handleKeyEventGlobal(event, keySequenceStr)
