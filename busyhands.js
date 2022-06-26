@@ -128,7 +128,9 @@ function handleKeyEventSelection(event, keySequenceStr) {
             event.preventDefault();
             let current = document.querySelector(CURRENT_SELECTION_QUERY);
             if (current) {
-                current.querySelector(COVER_QUERY).click()
+                let a = current.querySelector(COVER_QUERY);
+                a.setAttribute("target", "_blank");
+                a.click();
             }
             break;
         case 'Q':
