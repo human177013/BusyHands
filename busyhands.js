@@ -62,7 +62,7 @@ async function start() {
 
         let style = document.createElement('style');
         style.innerHTML = SELECTION_STYLE;
-        ocument.head.appendChild(style);
+        document.head.appendChild(style);
 
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Control' || event.key === 'Shift' || event.key === 'Alt')
