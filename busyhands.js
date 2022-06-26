@@ -12,7 +12,7 @@ const RANDOM_HREF = "/random/";
 const GALLERY_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/?$/g
 const COVER_QUERY = "div#cover a";
 
-const GALLERY_IMAGE_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/\n+\/$/g
+const GALLERY_IMAGE_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/\d+\/$/g
 const GO_BACK_QUERY = "a.go-back";
 
 let startTime = undefined;
