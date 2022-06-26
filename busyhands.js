@@ -27,7 +27,7 @@ const COVER_QUERY = "div#cover a";
 const GALLERY_IMAGE_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/\d+\/$/g
 const GO_BACK_QUERY = "a.go-back";
 
-const SELECTION_STYLE = document.createElement('style').innerHTML = `
+const SELECTION_STYLE = `
       ${CURRENT_SELECTION_QUERY} {
         outline: #ed2553 solid 4px;
       }
@@ -60,6 +60,8 @@ async function start() {
 
         console.log('BusyHands Started');
 
+        let style = document.createElement('style');
+        style.innerHTML = SELECTION_STYLE;
         ocument.head.appendChild(style);
 
         document.addEventListener('keydown', (event) => {
