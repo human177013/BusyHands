@@ -246,8 +246,12 @@ function selectGallery(galleryElement) {
     return current[current.length - 1];
 }
 
-document.onreadystatechange = function () {
-    if (document.readyState === 'interactive') {
-        start();
+if (document.readyState !== 'loading') {
+    start()
+} else {
+    document.onreadystatechange = function () {
+        if (document.readyState === 'complete') {
+            start();
+        }
     }
 }
