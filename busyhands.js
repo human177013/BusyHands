@@ -201,8 +201,8 @@ function changeSelection(distance) {
     if (!current) {
         selectGallery(document.querySelector(GALLERY_QUERY)); //select first if none selected
     } else {
-        let popularGalleries = new NodeList();
-        let mainGalleries = new NodeList();
+        let popularGalleries = undefined;
+        let mainGalleries = undefined;
         let currentindex = -1;
 
         if (document.URL.match(HOME_URL_PATTERN)) {
