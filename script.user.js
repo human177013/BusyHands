@@ -16,23 +16,30 @@ const URL = "https://human177013.github.io/BusyHands/busyhands.js";
 const FETCH_MAX_ATTEMPT = 3;
 
 
-(function() {
+(function () {
     try {
-        let fetchAttempt = 0
+        let fetchAttempt = 0;
+        let isLoaded = false;
 
-        fetch(URL).then((response) => {
-            response.text().then((script) => {
-                window.eval(script);
+        while (!isLoaded && fetchAttempt < FETCH_MAX_ATTEMPT) {
+            fetch(URL).then((response) => {                
+                response.text().then((script) => {
+                    isLoaded = true;
+                    window.eval(script);
+                });
+            }).catch((error) => {
+                fetchAttempt++;
+                if (fetchAttempt > FETCH_MAX_ATTEMPT) {
+                    throw error;
+                } else {
+                    console.warn('BusyHands script failed to load. Trying again...');
+                }
             });
-        }).catch((error) => {
-            fetchAttempt++;
-            if (fetchAttempt > FETCH_MAX_ATTEMPT) {
-                throw error;
-            } else {
-                console.log('BusyHands script failed to load ' + fetchAttempt + ' times.');
-            }
-        });
+        }
         
+        if (!isLoaded)
+            throw new Error('BusyHands script failed to load ' + fetchAttempt + ' times.')
+
     } catch (error) {
         console.log('BusyHands failed to load!');
         console.error(error);
