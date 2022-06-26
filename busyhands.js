@@ -205,8 +205,10 @@ function changeSelection(distance) {
                 let newGalleryindex = currentindex + distance;
                 if (newGalleryindex < 0 ) {
                     return selectGallery(popularGalleries[0]);
-                } else if (newGalleryindex > popularGalleries) {
+                } else if (newGalleryindex > popularGalleries.length && currentindex === popularGalleries.length - 1 ) {
                     return selectGallery(document.querySelector(MAIN_CONTAINER_QUERY + " " + GALLERY_QUERY))
+                } else if (newGalleryindex > popularGalleries.length) {
+                    return selectGallery(popularGalleries[popularGalleries.length - 1])
                 } else {
                     return selectGallery(popularGalleries[newGalleryindex]);
                 }
@@ -224,8 +226,10 @@ function changeSelection(distance) {
                 } else {
                     return selectGallery(mainGalleries[0]);
                 }
-            } else if (newGalleryindex > mainGalleries) {
+            } else if (newGalleryindex > mainGalleries.length && currentindex === mainGalleries.length - 1) {
                 return current
+            } else if (newGalleryindex > mainGalleries.length && currentindex === mainGalleries.length - 1) {
+                return selectGallery(mainGalleries[mainGalleries.length - 1]);
             }else {
                 return selectGallery(mainGalleries[newGalleryindex]);
             }
