@@ -34,31 +34,8 @@ const SELECTION_STYLE = `
       }
     `;
 
-let startTime = undefined;
-
-function waitPageLoad() {
-    return new Promise(resolve => {
-        setTimeout((_document) => {
-            // console.log("Checking document.readyState")
-            var readyState = _document.readyState
-            if (readyState === 'loading' && !((Date.now() - startTime) > LOAD_TIMEOUT)) {
-                // console.log('Document not ready');
-                readyState = waitPageLoad()
-            }
-            resolve(readyState);
-        }, LOAD_INIT_WAIT, document);
-    });
-}
-
-async function start() {
+function start() {
     try {
-        startTime = Date.now();
-        let docState = await waitPageLoad()
-
-        if (docState === 'loading') {
-            throw new Error("Load Timeout: Page did noy load in a timely manner.")
-        }
-
         console.log('BusyHands Started');
 
         let style = document.createElement('style');
@@ -132,7 +109,7 @@ function handleKeyEventSelection(event, keySequenceStr) {
             let current = document.querySelector(CURRENT_SELECTION_QUERY);
             if (current) {
                 let a = current.querySelector(GALLERY_LINK_QUERY);
-                a.setAttribute("target", "_blank");
+                a.setAttribute("target", "_blank"); // TODO - not working, blocked by popup blocker
                 a.click();
             }
             break;
@@ -183,7 +160,7 @@ function handleKeyEventGlobal(event, keySequenceStr) {
     switch (keySequenceStr) {
         case 'R':
             event.preventDefault();
-            window.open(RANDOM_HREF, "_blank");
+            window.open(RANDOM_HREF, "_blank"); // TODO - not working
             break;
         default:
             return;
@@ -202,60 +179,56 @@ function changeSelection(distance) {
     if (!current) {
         selectGallery(document.querySelector(GALLERY_QUERY)); //select first if none selected
     } else {
-        let popularGalleries = undefined;
-        let mainGalleries = undefined;
-        let currentindex = -1;
-
-        currentindex = Array.prototype.indexOf.call(popularGalleries, current);
-        if (currentindex > -1) {
-            changeSelectionPopular(distance, current, currentindex)
+        if (current.parentElement.classList.contains("index-popuular")) {
+            changeSelectionPopular(distance, current)
         } else {
-            currentindex = Array.prototype.indexOf.call(mainGalleries, current);
-            changeSelectionMain(distance, current, currentindex)
-        }       
+            changeSelectionMain(distance, current)
+        }
     }
 }
 
-function changeSelectionPopular(distance, current, currentindex) {
+function changeSelectionPopular(distance, current, currentindex, isFromMain = false) {
     let popularGalleries = document.querySelectorAll(POPULAR_CONTAINER_QUERY + " " + GALLERY_QUERY);
 
-    let isFromMain = (Array.prototype.indexOf.call(popularGalleries, current) === -1)
-
-    let newGalleryindex = currentindex + distance;
     if (isFromMain) {
-        newGalleryindex = popularGalleries.length - ((popularGalleries.length % distance) - currentindex);
+        let newGalleryindex = popularGalleries.length - ((popularGalleries.length % distance) - currentindex);
         if (newGalleryindex > popularGalleries.length - 1)
             newGalleryindex = popularGalleries.length - 1;
         return selectGallery(popularGalleries.item(newGalleryindex));
-    } else if (newGalleryindex < 0) {
-        return current;
-    } else if (newGalleryindex > popularGalleries.length - 1) {
-        return changeSelectionMain(distance, current, currentindex);
     } else {
-        return selectGallery(popularGalleries.item(newGalleryindex));
+        currentindex = Array.prototype.indexOf.call(popularGalleries, current);
+        let newGalleryindex = currentindex + distance;
+        if (newGalleryindex < 0) {
+            return current;
+        } else if (newGalleryindex > popularGalleries.length - 1) {
+            return changeSelectionMain(distance, current, currentindex);
+        } else {
+            return selectGallery(popularGalleries.item(newGalleryindex));
+        }
     }
 }
 
-function changeSelectionMain(distance, current, currentindex) {
+function changeSelectionMain(distance, current, currentindex = -1, isFromPopular = false) {
     let mainGalleries = document.querySelectorAll(MAIN_CONTAINER_QUERY + " " + GALLERY_QUERY);
-
-    let isFromPopular = (Array.prototype.indexOf.call(mainGalleries, current) === -1)
-
-    let newGalleryindex = currentindex + distance;
+    
     if (isFromPopular) {
         let width = getCollumCount();
-        newGalleryindex = width - (width - (currentindex % distance));
+        let newGalleryindex = width - (width - (currentindex % distance));
         return selectGallery(popularGalleries.item(newGalleryindex));
-    } else if (isFromPopular < 0) {
-        if (document.URL.match(HOME_URL_PATTERN)) {
-            return changeSelectionPopular(distance, current, currentindex)
-        } else {
-            return selectGallery(mainGalleries.item(0));
-        }
-    } else if (newGalleryindex >= mainGalleries.length) {
-        return current;
     } else {
-        return selectGallery(mainGalleries.item(newGalleryindex));
+        currentindex = Array.prototype.indexOf.call(mainGalleries, current) === -1
+        let newGalleryindex = currentindex + distance;
+        if (isFromPopular < 0) {
+            if (document.URL.match(HOME_URL_PATTERN)) {
+                return changeSelectionPopular(distance, current, currentindex)
+            } else {
+                return selectGallery(mainGalleries.item(0));
+            }
+        } else if (newGalleryindex >= mainGalleries.length) {
+            return current;
+        } else {
+            return selectGallery(mainGalleries.item(newGalleryindex));
+        }
     }
 }
 
@@ -273,4 +246,8 @@ function selectGallery(galleryElement) {
     return current[current.length - 1];
 }
 
-start()
+document.onreadystatechange = function () {
+    if (document.readyState === 'interactive') {
+        start();
+    }
+}
