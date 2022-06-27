@@ -7,7 +7,7 @@ const RANDOM_HREF = "/random/";
 
 const SELECTION_CLASS = "busyhands_seleted"
 
-const HOME_URL_PATTERN = /^https?:\/\/nhentai\.net\/?$/g
+const HOME_URL_PATTERN = /^https?:\/\/nhentai\.net\/?(\?page=1)?$/g
 const HOME_PAGES_URL_PATTERN = /^https?:\/\/nhentai\.net\/\?page=\d+$/g
 const SEARCH_URL_PATTERN = /^https?:\/\/nhentai\.net\/search\/\?q=.+$/g
 const POPULAR_CONTAINER_QUERY = "div.container.index-container.index-popular";
