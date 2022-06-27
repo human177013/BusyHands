@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         BusyHands
+// @name         BusyHands-dev
 // @namespace    https://human177013.github.io
 // @version      1.0.0-dev
 // @icon         https://i.imgur.com/uLAimaY.png
