@@ -6,13 +6,13 @@
 // @description  nhentai one-handed tool
 // @author       human177013
 // @match        https://nhentai.net/*
-// @updateURL    https://human177013.github.io/BusyHands/script.meta.js
-// @downloadURL  https://human177013.github.io/BusyHands/script.user.js
+// @updateURL    https://human177013.github.io/BusyHands/busyhands.meta.js
+// @downloadURL  https://human177013.github.io/BusyHands/busyhands.user.js
 // @run-at       document-end
 // @grant        none
 // ==/UserScript==
 
-const SCRIPT_URL = "https://human177013.github.io/BusyHands/busyhands.js";
+const SCRIPT_URL = "https://raw.githubusercontent.com/human177013/BusyHands/main/busyhands.js";
 const FETCH_MAX_ATTEMPT = 3;
 const FETCH_RETRY_DELAY = 1000;
 

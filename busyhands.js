@@ -1,21 +1,4 @@
-// ==UserScript==
-// @name         BusyHands
-// @namespace    https://human177013.github.io
-// @version      0.0.1-dev
-// @icon         https://i.imgur.com/uLAimaY.png
-// @description  nhentai one-handed tool
-// @author       human177013
-// @match        https://nhentai.net/*
-// @downloadURL  https://raw.githubusercontent.com/human177013/BusyHands/develop/busyhands.js
-// @run-at       document-end
-// @grant        none
-// ==/UserScript==
 
-const Keys = Object.freeze({
-    Ctrl: 'Ctrl',
-    Shift: 'Shift',
-    Alt: 'Alt'
-});
 
 const LOAD_INIT_WAIT = 0;
 const LOAD_TIMEOUT = 5000;
@@ -42,10 +25,18 @@ const GALLERY_IMAGE_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/\d+\/$/g
 const GO_BACK_QUERY = "a.go-back";
 
 const SELECTION_STYLE = `
-      ${CURRENT_SELECTION_QUERY} {
-        outline: #ed2553 solid 4px;
-      }
-    `;
+    ${CURRENT_SELECTION_QUERY} {
+    outline: #ed2553 solid 4px;
+    }
+`;
+
+const Keys = Object.freeze({
+    Ctrl: 'Ctrl',
+    Shift: 'Shift',
+    Alt: 'Alt'
+});
+
+let openAllGalleriesInNewTab = true; // Excludes random
 
 function start() {
     try {
@@ -55,17 +46,36 @@ function start() {
         style.innerHTML = SELECTION_STYLE;
         document.head.appendChild(style);
 
+        if (openAllGalleriesInNewTab && (document.URL.match(HOME_URL_PATTERN) || document.URL.match(HOME_PAGES_URL_PATTERN) || document.URL.match(SEARCH_URL_PATTERN))) {
+            document.querySelectorAll(GALLERY_LINK_QUERY).forEach((element) => {
+                element.setAttribute("target", "_blank")
+            });
+
+        }
+
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'Control' || event.key === 'Shift' || event.key === 'Alt')
-                return; // Do nothing.
-            else
-                handleKeyEvent(event);
+            try {
+                if (event.key === 'Control' || event.key === 'Shift' || event.key === 'Alt')
+                    return; // Do nothing.
+                else
+                    handleKeyEvent(event);
+            } catch (error) {
+                console.error(error);
+            }
         }, false);
 
     } catch (error) {
         console.log('BusyHands failed');
         console.error(error);
     }
+}
+
+function testpop() {
+    n = window.open('', '_blank');
+    var state = n !== null;
+    if (state)
+        n.close()
+    return state;
 }
 
 function handleKeyEvent(event) {
@@ -121,9 +131,7 @@ function handleKeyEventSelection(event, keySequenceStr) {
             event.preventDefault();
             let current = document.querySelector(CURRENT_SELECTION_QUERY);
             if (current) {
-                let a = current.querySelector(GALLERY_LINK_QUERY);
-                a.setAttribute("target", "_blank"); // TODO - not working, blocked by popup blocker
-                a.click();
+                current.querySelector(GALLERY_LINK_QUERY).click();
             }
             break;
         case 'Q':
@@ -173,7 +181,7 @@ function handleKeyEventGlobal(event, keySequenceStr) {
     switch (keySequenceStr) {
         case 'R':
             event.preventDefault();
-            window.open(RANDOM_HREF, "_blank"); // TODO - not working
+            document.location.href = RANDOM_HREF;
             break;
         default:
             return;
@@ -181,20 +189,29 @@ function handleKeyEventGlobal(event, keySequenceStr) {
 }
 
 function getCollumCount() {
-    let containerWidth = document.querySelector(MAIN_CONTAINER_QUERY).offsetWidth
-    let galleryWidth = document.querySelector(GALLERY_QUERY).offsetWidth
-    let marginWidth = document.querySelector(GALLERY_QUERY).offsetLeft * 2
-    return Math.floor((containerWidth - marginWidth) / galleryWidth)
+    let count = 0;
+    let previos = undefined;
+    for (let element of document.querySelectorAll(GALLERY_QUERY)) {
+        if (!previos || previos.getBoundingClientRect().top === element.getBoundingClientRect().top) {
+            count++;
+            previos = element;
+        } else {
+            break;
+        }
+    }
+    return count;
 }
 
 function changeSelection(distance) {
     let current = document.querySelector(CURRENT_SELECTION_QUERY);
     if (!current) {
-        selectGallery(document.querySelector(GALLERY_QUERY)); //select first if none selected
+        selectGallery(current, document.querySelector(GALLERY_QUERY)); //select first if none selected
     } else {
-        if (current.parentElement.classList.contains("index-popuular")) {
+        if (current.parentElement.classList.contains("index-popular")) {
+            console.log("Current selected is in popular")
             changeSelectionPopular(distance, current)
         } else {
+            console.log("Current selected is in main")
             changeSelectionMain(distance, current)
         }
     }
@@ -203,60 +220,84 @@ function changeSelection(distance) {
 function changeSelectionPopular(distance, current, currentindex, isFromMain = false) {
     let popularGalleries = document.querySelectorAll(POPULAR_CONTAINER_QUERY + " " + GALLERY_QUERY);
 
+    // console.log("isFromMain: " + isFromMain)
+    // console.log("distance: " + distance)
     if (isFromMain) {
-        let newGalleryindex = popularGalleries.length - ((popularGalleries.length % distance) - currentindex);
+        let newGalleryindex = 0;
+      	console.log("mod: " + popularGalleries.length % distance)
+        if (popularGalleries.length % distance === 0)
+            newGalleryindex = popularGalleries.length + distance + currentindex;
+        else
+            newGalleryindex = popularGalleries.length + (distance - (popularGalleries.length % distance)) + distance + currentindex;
         if (newGalleryindex > popularGalleries.length - 1)
             newGalleryindex = popularGalleries.length - 1;
-        return selectGallery(popularGalleries.item(newGalleryindex));
+        // console.log("currentindex: " + currentindex)
+        // console.log("newGalleryindex: " + newGalleryindex)
+        return selectGallery(current, popularGalleries.item(newGalleryindex));
     } else {
         currentindex = Array.prototype.indexOf.call(popularGalleries, current);
         let newGalleryindex = currentindex + distance;
+        // console.log("currentindex: " + currentindex)
+        // console.log("newGalleryindex: " + newGalleryindex)
         if (newGalleryindex < 0) {
             return current;
         } else if (newGalleryindex > popularGalleries.length - 1) {
-            return changeSelectionMain(distance, current, currentindex);
+            return changeSelectionMain(distance, current, currentindex, true);
         } else {
-            return selectGallery(popularGalleries.item(newGalleryindex));
+            return selectGallery(current, popularGalleries.item(newGalleryindex));
         }
     }
 }
 
 function changeSelectionMain(distance, current, currentindex = -1, isFromPopular = false) {
     let mainGalleries = document.querySelectorAll(MAIN_CONTAINER_QUERY + " " + GALLERY_QUERY);
-    
+
+    // console.log("isFromPopular: " + isFromPopular)
+    // console.log("distance: " + distance)
     if (isFromPopular) {
         let width = getCollumCount();
         let newGalleryindex = width - (width - (currentindex % distance));
-        return selectGallery(popularGalleries.item(newGalleryindex));
+        // console.log("width: " + width)
+        // console.log("newGalleryindex: " + newGalleryindex)
+        return selectGallery(current, mainGalleries.item(newGalleryindex));
     } else {
-        currentindex = Array.prototype.indexOf.call(mainGalleries, current) === -1
+        currentindex = Array.prototype.indexOf.call(mainGalleries, current)
         let newGalleryindex = currentindex + distance;
-        if (isFromPopular < 0) {
+        // console.log("currentindex: " + currentindex)
+        // console.log("newGalleryindex: " + newGalleryindex)
+        if (newGalleryindex < 0) {
             if (document.URL.match(HOME_URL_PATTERN)) {
-                return changeSelectionPopular(distance, current, currentindex)
+                return changeSelectionPopular(distance, current, currentindex, true)
             } else {
-                return selectGallery(mainGalleries.item(0));
+                return current;
             }
         } else if (newGalleryindex >= mainGalleries.length) {
             return current;
         } else {
-            return selectGallery(mainGalleries.item(newGalleryindex));
+            return selectGallery(current, mainGalleries.item(newGalleryindex));
         }
     }
 }
 
-function selectGallery(galleryElement) {
-    let current = document.querySelectorAll(CURRENT_SELECTION_QUERY);
-
+function selectGallery(current, newGalleryElement) {
     if (current) {
-        current.forEach(element => {
-            element.classList.remove(SELECTION_CLASS);
-        });
+        current.classList.remove(SELECTION_CLASS);
     }
+    if (!isInViewport(newGalleryElement)) {
+  	    newGalleryElement.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+    }
+    newGalleryElement.classList.add(SELECTION_CLASS);
+    return current;
+}
 
-    galleryElement.classList.add(SELECTION_CLASS);
-
-    return current[current.length - 1];
+function isInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
 }
 
 if (document.readyState !== 'loading') {
