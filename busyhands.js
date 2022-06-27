@@ -91,7 +91,7 @@ function handleKeyEvent(event) {
     keySequence.push(code.replace(/Digit|Key/i, ""));
 
     var keySequenceStr = keySequence.join("+");
-    console.log(keySequenceStr);
+    // console.log(keySequenceStr);
 
     if (document.URL.match(HOME_URL_PATTERN) || document.URL.match(HOME_PAGES_URL_PATTERN) || document.URL.match(SEARCH_URL_PATTERN)) {
         handleKeyEventSelection(event, keySequenceStr)
@@ -208,10 +208,10 @@ function changeSelection(distance) {
         selectGallery(current, document.querySelector(GALLERY_QUERY)); //select first if none selected
     } else {
         if (current.parentElement.classList.contains("index-popular")) {
-            console.log("Current selected is in popular")
+            // console.log("Current selected is in popular")
             changeSelectionPopular(distance, current)
         } else {
-            console.log("Current selected is in main")
+            // console.log("Current selected is in main")
             changeSelectionMain(distance, current)
         }
     }
@@ -224,7 +224,7 @@ function changeSelectionPopular(distance, current, currentindex, isFromMain = fa
     // console.log("distance: " + distance)
     if (isFromMain) {
         let newGalleryindex = 0;
-      	console.log("mod: " + popularGalleries.length % distance)
+      	// console.log("mod: " + popularGalleries.length % distance)
         if (popularGalleries.length % distance === 0)
             newGalleryindex = popularGalleries.length + distance + currentindex;
         else
