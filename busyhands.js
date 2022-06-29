@@ -24,6 +24,8 @@ const COVER_QUERY = "div#cover a";
 const GALLERY_IMAGE_URL_PATTERN = /^https?:\/\/nhentai\.net\/g\/\d+\/\d+\/$/g
 const GO_BACK_QUERY = "a.go-back";
 
+const SEARCH_BOX_QUERY = "form.search input";
+
 const SELECTION_STYLE = `
     ${CURRENT_SELECTION_QUERY} {
     outline: #ed2553 solid 4px;
@@ -55,7 +57,7 @@ function start() {
 
         document.addEventListener('keydown', (event) => {
             try {
-                if (event.key === 'Control' || event.key === 'Shift' || event.key === 'Alt')
+                if (event.key === 'Control' || event.key === 'Shift' || event.key === 'Alt' || isSearchInFocus())
                     return; // Do nothing.
                 else
                     handleKeyEvent(event);
@@ -298,6 +300,11 @@ function isInViewport(el) {
         rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
         rect.right <= (window.innerWidth || document.documentElement.clientWidth)
     );
+}
+
+function isSearchInFocus() {
+    let searchBox = document.querySelector(SEARCH_BOX_QUERY);
+    return (searchBox === document.activeElement);
 }
 
 if (document.readyState !== 'loading') {
