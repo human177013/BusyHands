@@ -10,6 +10,7 @@ const SELECTION_CLASS = "busyhands_seleted"
 const HOME_URL_PATTERN = /^https?:\/\/nhentai\.net\/?(\?page=1)?$/g
 const HOME_PAGES_URL_PATTERN = /^https?:\/\/nhentai\.net\/\?page=\d+$/g
 const SEARCH_URL_PATTERN = /^https?:\/\/nhentai\.net\/search\/\?q=.+$/g
+const INDEX_CONTAINER_QUERY = "div.container.index-container";
 const POPULAR_CONTAINER_QUERY = "div.container.index-container.index-popular";
 const MAIN_CONTAINER_QUERY = "div.container.index-container:not(.index-popular)";
 const GALLERY_QUERY = "div.gallery";
@@ -94,8 +95,7 @@ function handleKeyEvent(event) {
 
     var keySequenceStr = keySequence.join("+");
     // console.log(keySequenceStr);
-
-    if (document.URL.match(HOME_URL_PATTERN) || document.URL.match(HOME_PAGES_URL_PATTERN) || document.URL.match(SEARCH_URL_PATTERN)) {
+    if (document.querySelector(INDEX_CONTAINER_QUERY)) {
         handleKeyEventSelection(event, keySequenceStr)
     } else if (document.URL.match(GALLERY_URL_PATTERN)) {
         handleKeyEventGallery(event, keySequenceStr)
@@ -307,12 +307,3 @@ function isSearchInFocus() {
     return (searchBox === document.activeElement);
 }
 
-if (document.readyState !== 'loading') {
-    start()
-} else {
-    document.onreadystatechange = function () {
-        if (document.readyState === 'complete') {
-            start();
-        }
-    }
-}
