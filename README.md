@@ -15,7 +15,7 @@ Delete plug-in or delete script from Tampermonkey/Greasemonkey plug-in.
 | ----------- | ----------- |
 | R | Loads random gallery |
 
-### Home/Search Page Keys
+### Home/Search/Tags/Artists/Charaters/Parodies/Groups Page Keys
 | Key | Function |
 | ----------- | ----------- |
 | W or 🡆 (ArrowUp) | Moves seletor up one row |

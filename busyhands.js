@@ -307,12 +307,3 @@ function isSearchInFocus() {
     return (searchBox === document.activeElement);
 }
 
-if (document.readyState !== 'loading') {
-    start()
-} else {
-    document.onreadystatechange = function () {
-        if (document.readyState === 'complete') {
-            start();
-        }
-    }
-}
