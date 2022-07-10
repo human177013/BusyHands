@@ -18,9 +18,9 @@ Delete plug-in or delete script from Tampermonkey/Greasemonkey plug-in.
 ### Home/Search/Tags/Artists/Charaters/Parodies/Groups Page Keys
 | Key | Function |
 | ----------- | ----------- |
-| W or 🡆 (ArrowUp) | Moves seletor up one row |
-| A or 🡆 (ArrowLeft) | Moves seletor to the previous item |
-| S or 🡆 (ArrowDown) | Moves seletor down one row |
+| W or 🡅 (ArrowUp) | Moves seletor up one row |
+| A or 🡄 (ArrowLeft) | Moves seletor to the previous item |
+| S or 🡇 (ArrowDown) | Moves seletor down one row |
 | D or 🡆 (ArrowRight) | Moves seletor to the next item |
 | F or Enter | Opens current selected item |
 | Q or PageUp | Navagates to the previous page |
