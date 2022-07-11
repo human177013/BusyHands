@@ -7,9 +7,6 @@ const RANDOM_HREF = "/random/";
 
 const SELECTION_CLASS = "busyhands_seleted"
 
-const HOME_URL_PATTERN = /^https?:\/\/nhentai\.net\/?(\?page=1)?$/g
-const HOME_PAGES_URL_PATTERN = /^https?:\/\/nhentai\.net\/\?page=\d+$/g
-const SEARCH_URL_PATTERN = /^https?:\/\/nhentai\.net\/search\/\?q=.+$/g
 const INDEX_CONTAINER_QUERY = "div.container.index-container";
 const POPULAR_CONTAINER_QUERY = "div.container.index-container.index-popular";
 const MAIN_CONTAINER_QUERY = "div.container.index-container:not(.index-popular)";
@@ -49,7 +46,7 @@ function start() {
         style.innerHTML = SELECTION_STYLE;
         document.head.appendChild(style);
 
-        if (openAllGalleriesInNewTab && (document.URL.match(HOME_URL_PATTERN) || document.URL.match(HOME_PAGES_URL_PATTERN) || document.URL.match(SEARCH_URL_PATTERN))) {
+        if (openAllGalleriesInNewTab && document.querySelector(INDEX_CONTAINER_QUERY)) {
             document.querySelectorAll(GALLERY_LINK_QUERY).forEach((element) => {
                 element.setAttribute("target", "_blank")
             });
@@ -268,7 +265,7 @@ function changeSelectionMain(distance, current, currentindex = -1, isFromPopular
         // console.log("currentindex: " + currentindex)
         // console.log("newGalleryindex: " + newGalleryindex)
         if (newGalleryindex < 0) {
-            if (document.URL.match(HOME_URL_PATTERN)) {
+            if (document.querySelector(POPULAR_CONTAINER_QUERY)) {
                 return changeSelectionPopular(distance, current, currentindex, true)
             } else {
                 return current;
