@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         BusyHands-dev
 // @namespace    https://human177013.github.io
-// @version      1.1.0-dev
+// @version      1.1.1-dev
 // @icon         https://i.imgur.com/uLAimaY.png
 // @description  nhentai one-handed tool
 // @author       human177013
