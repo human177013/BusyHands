@@ -1,4 +1,4 @@
-# Keys Bindings
+# nhentai Keys Bindings
 ### Global Keys
 | Key | Function |
 | ----------- | ----------- |
