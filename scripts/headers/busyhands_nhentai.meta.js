@@ -9,8 +9,8 @@
 // @website      https://human177013.github.io/BusyHands/
 // @updateURL    https://human177013.github.io/BusyHands/scripts/headers/busyhands_nhentai.meta.js
 // @downloadURL  https://human177013.github.io/BusyHands/scripts/headers/busyhands_nhentai.user.js
-// @require      https://raw.githubusercontent.com/human177013/BusyHands/main/scripts/busyhands_loader.js
 // @require      https://raw.githubusercontent.com/human177013/BusyHands/main/scripts/busyhands_nhentai.js
+// @require      https://raw.githubusercontent.com/human177013/BusyHands/main/scripts/busyhands_loader.js
 // @run-at       document-end
 // @grant        none
 // ==/UserScript==
