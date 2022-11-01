@@ -49,14 +49,29 @@ jobs:
           git config user.email github-actions@github.com
           git add .
           
-          if [ $(git diff --quiet && git diff --cached --quiet) ]; then 
+          commit=
+          
+          git update-index -q --refresh
+          
+          if ! git diff-index --quiet HEAD --; then
+            echo "Commiting changes to '${BRANCH}' branch..."
             git commit -m "generated user scripts for '${BRANCH}' branch"
+            commit=$(git rev-parse HEAD)
             git push
+            echo Done!
+          else
+            echo "No Changes to commit!"
           fi
 
           if [ "$BRANCH" != "main" ]; then
-            git switch main
+            git checkout main
             git restore -s $BRANCH -SW -- ./generated/**
-            git push
+            git update-index -q --refresh
+            if ! git diff-index --quiet HEAD --; then
+              git commit -m "copying generated user scripts for '${BRANCH}' branch to main"
+              git push
+            else
+              echo "No Changes to commit!"
+            fi
           fi
 
