@@ -26,6 +26,7 @@ jobs:
     - name: Copy Files
       run: |
         set -e
+        ls -sl ..
         cp ../develop/generated ./generated
         git add .
         if ! git diff-index --quiet HEAD --; then
