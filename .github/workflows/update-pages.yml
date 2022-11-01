@@ -62,18 +62,7 @@ jobs:
           else
             echo "No Changes to commit!"
           fi
-
-          if [ "$BRANCH" != "main" ]; then
-            git checkout main
-            git restore -s $BRANCH -SW -- ./generated/**
-            git update-index -q --refresh
-            if ! git diff-index --quiet HEAD --; then
-              git commit -m "copying generated user scripts for '${BRANCH}' branch to main"
-              git push
-            else
-              echo "No Changes to commit!"
-            fi
-          fi
+          
       - name: Checkout
         uses: actions/checkout@v3        
         if: ${{ success() && github.head_ref != 'main' }}
