@@ -15,14 +15,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
+        ref: develop
+        path: develop
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
         ssh-key: ${{ secrets.DEPLOY_KEY }}
         ref: main
+        path: main
     - name: Copy Files
       run: |
         set -e
-        BRANCH=develop
-        git restore -s origin/$BRANCH -SW -- ./generated/**
-        git update-index -q --refresh
+        cp ../develop/generated ./generated
+        git add .
         if ! git diff-index --quiet HEAD --; then
           git commit -m "copying generated user scripts for '${BRANCH}' branch to main"
           git push
