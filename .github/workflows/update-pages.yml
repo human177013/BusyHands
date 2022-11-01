@@ -22,4 +22,37 @@ jobs:
           ref: ${{ github.head_ref }}
       - name: Generate
         run: |
-          echo $(git branch --show-current)
+          set -e
+          shopt -s globstar
+          
+          export BRANCH=$(git branch --show-current)
+          echo "Current Branch: $BRANCH_NAME"
+
+          rm -rf ./generated/$BRANCH
+          WORKING_DIR=./generated/$BRANCH/scripts
+          mkdir -p $WORKING_DIR
+
+          for i in **/*.template; do
+            templateFilePath=$(realpath $i)
+            parentdir="$(dirname "$templateFilePath")"
+            parentdir=${parentdir##*/}
+            filename=$(basename -- "$templateFilePath")
+            filename=${filename%.*}
+            mkdir -p $WORKING_DIR/$parentdir
+            pushd $WORKING_DIR/$parentdir
+              cat $templateFilePath | envsubst > $filename
+            popd
+          done
+
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "generated user scripts for '${BRANCH}' branch"
+          git push
+
+          if [ "$BRANCH" != "main" ]; then
+            git switch main
+            git restore -s $BRANCH -SW -- ./generated/**
+            git push
+          end 
+
