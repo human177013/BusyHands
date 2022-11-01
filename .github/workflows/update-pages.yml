@@ -1,0 +1,25 @@
+name: Generate user scripts for git pages
+
+on:
+  push:
+    branches:
+    - main
+    - develop
+    paths-ignore:
+    - 'README.md'
+    - 'generated/**'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Generate
+        run: |
+          echo $(git branch --show-current)
