@@ -48,13 +48,15 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
-          git commit -m "generated user scripts for '${BRANCH}' branch"
-          git push
+          
+          if [ $(git diff --quiet && git diff --cached --quiet) ]; then 
+            git commit -m "generated user scripts for '${BRANCH}' branch"
+            git push
+          fi
 
           if [ "$BRANCH" != "main" ]; then
             git switch main
             git restore -s $BRANCH -SW -- ./generated/**
             git push
-          end 
-          exit 0
+          fi
 
