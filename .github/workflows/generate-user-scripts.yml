@@ -23,7 +23,7 @@ jobs:
           set -e
           shopt -s globstar
           
-          export BRANCH=$(git rev-parse HEAD)
+          export BRANCH=$(git rev-parse --abbrev-ref HEAD)
           echo "Current Branch: $BRANCH"
 
           rm -rf ./generated/$BRANCH
