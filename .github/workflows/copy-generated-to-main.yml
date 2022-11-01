@@ -21,7 +21,7 @@ jobs:
       run: |
         set -e
         BRANCH=develop
-        git restore -s $BRANCH -SW -- ./generated/**
+        git restore -s origin/$BRANCH -SW -- ./generated/**
         git update-index -q --refresh
         if ! git diff-index --quiet HEAD --; then
           git commit -m "copying generated user scripts for '${BRANCH}' branch to main"
