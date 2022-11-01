@@ -20,7 +20,7 @@ jobs:
     - name: Copy Files
       run: |
         set -e
-        #BRANCH=develop
+        BRANCH=develop
         git restore -s $BRANCH -SW -- ./generated/**
         git update-index -q --refresh
         if ! git diff-index --quiet HEAD --; then
