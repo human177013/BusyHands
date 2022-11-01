@@ -12,9 +12,6 @@ on:
 jobs:
   generate:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
     env:
       BRANCH: ${{ github.head_ref }}
     steps:
