@@ -56,4 +56,5 @@ jobs:
             git restore -s $BRANCH -SW -- ./generated/**
             git push
           end 
+          exit 0
 
