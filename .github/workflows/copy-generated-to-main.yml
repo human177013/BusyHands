@@ -1,0 +1,30 @@
+name: copy-generated-to-main
+
+on:
+  push:
+    branches:
+    - develop
+    paths:
+    - 'generated/**'
+
+jobs:
+  copy-generated:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          ref: main
+      - name: Copy Files
+        run: |
+          set -e
+          #BRANCH=develop
+          git restore -s $BRANCH -SW -- ./generated/**
+          git update-index -q --refresh
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "copying generated user scripts for '${BRANCH}' branch to main"
+            git push
+          else
+            echo "No Changes to commit!"
+          fi
