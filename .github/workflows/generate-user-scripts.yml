@@ -1,4 +1,4 @@
-name: Generate user scripts for git pages
+name: generate-user-scripts
 
 on:
   push:
@@ -8,25 +8,25 @@ on:
     paths-ignore:
     - 'README.md'
     - 'generated/**'
-
+    
 jobs:
   generate:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
+    env:
+      BRANCH: ${{ github.head_ref }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.head_ref }}
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+          ref: ${{ env.BRANCH }}
       - name: Generate
         run: |
           set -e
           shopt -s globstar
           
-          export BRANCH=$(git branch --show-current)
-          echo "Current Branch: $BRANCH_NAME"
+          #export BRANCH=${GITHUB_HEAD_REF}
+          echo "Current Branch: $BRANCH"
 
           rm -rf ./generated/$BRANCH
           WORKING_DIR=./generated/$BRANCH/scripts
@@ -47,12 +47,18 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
-          git commit -m "generated user scripts for '${BRANCH}' branch"
-          git push
-
-          if [ "$BRANCH" != "main" ]; then
-            git switch main
-            git restore -s $BRANCH -SW -- ./generated/**
+          
+          commit=
+          
+          git update-index -q --refresh
+          
+          if ! git diff-index --quiet HEAD --; then
+            echo "Commiting changes to '${BRANCH}' branch..."
+            git commit -m "generated user scripts for '${BRANCH}' branch"
+            commit=$(git rev-parse HEAD)
             git push
-          end 
+            echo Done!
+          else
+            echo "No Changes to commit!"
+          fi
 
