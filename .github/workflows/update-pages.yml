@@ -8,9 +8,7 @@ on:
     paths-ignore:
     - 'README.md'
     - 'generated/**'
-env:
-  BRANCH: ${{ github.head_ref }}
-
+    
 jobs:
   generate:
     runs-on: ubuntu-latest
@@ -22,13 +20,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           ssh-key: ${{ secrets.DEPLOY_KEY }}
-          ref: ${{ env.BRANCH }}
+          ref: ${{ github.head_ref }}
       - name: Generate
         run: |
           set -e
           shopt -s globstar
           
-          #export BRANCH=$(git branch --show-current)
+          export BRANCH=${GITHUB_HEAD_REF}
           echo "Current Branch: $BRANCH"
 
           rm -rf ./generated/$BRANCH
@@ -75,6 +73,7 @@ jobs:
         if: ${{ success() && github.head_ref != 'main' }}
         run: |
           set -e
+          BRANCH=${GITHUB_HEAD_REF}
           echo branch: '$BRANCH'
           git restore -s $BRANCH -SW -- ./generated/**
           git update-index -q --refresh
