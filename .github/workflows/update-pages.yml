@@ -15,18 +15,20 @@ jobs:
     defaults:
       run:
         shell: bash
+    env:
+      BRANCH: ${{ github.head_ref }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           ssh-key: ${{ secrets.DEPLOY_KEY }}
-          ref: ${{ github.head_ref }}
+          ref: ${{ env.BRANCH }}
       - name: Generate
         run: |
           set -e
           shopt -s globstar
           
-          export BRANCH=${GITHUB_HEAD_REF}
+          #export BRANCH=${GITHUB_HEAD_REF}
           echo "Current Branch: $BRANCH"
 
           rm -rf ./generated/$BRANCH
@@ -73,7 +75,7 @@ jobs:
         if: ${{ success() && github.head_ref != 'main' }}
         run: |
           set -e
-          BRANCH=${GITHUB_HEAD_REF}
+          #BRANCH=${GITHUB_HEAD_REF}
           echo branch: '$BRANCH'
           git restore -s $BRANCH -SW -- ./generated/**
           git update-index -q --refresh
