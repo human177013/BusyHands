@@ -73,7 +73,7 @@ jobs:
         if: ${{ success() && github.head_ref != 'main' }}
         run: |
           set -e
-          echo $BRANCH
+          echo branch: '$BRANCH'
           git restore -s $BRANCH -SW -- ./generated/**
           git update-index -q --refresh
           if ! git diff-index --quiet HEAD --; then
