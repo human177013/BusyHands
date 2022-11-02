@@ -24,7 +24,7 @@ jobs:
         ref: main
         path: main
     - name: Copy Files
-      working-directory: ./BusyHands/BusyHands/main
+      working-directory: main
       run: |
         set -e
         ls -sl ..
