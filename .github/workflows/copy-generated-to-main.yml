@@ -29,6 +29,8 @@ jobs:
         set -e
         ls -sl ..
         cp -r ../develop/generated ./generated
+        git config user.name github-actions
+        git config user.email github-actions@github.com
         git add .
         if ! git diff-index --quiet HEAD --; then
           git commit -m "copying generated user scripts for '${BRANCH}' branch to main"
